@@ -20,19 +20,8 @@ Status open_decode_files(DecodeInfo *decInfo)
 
     	return e_failure;
     }
-
-    // Secret file
-    decInfo->fptr_secret = fopen(decInfo->secret_fname, "w");
-    // Do Error handling
-    if (decInfo->fptr_secret == NULL)
-    {
-    	perror("fopen");
-    	fprintf(stderr, "ERROR: Unable to open file %s\n", decInfo->secret_fname);
-
-    	return e_failure;
-    }
-    // No failure return e_success
     return e_success;
+
 }
 
 
@@ -46,7 +35,7 @@ Status read_and_validate_decode_args(int argc,char *argv[], DecodeInfo *decInfo)
         return e_failure;
     }
 
-    if(strcmp(argv[2]+strlen(argv[2])-4,".bmp")!=0)
+    if(strlen(argv[2]) < 4 || strcmp(argv[2] + strlen(argv[2]) - 4, ".bmp") != 0)
     {
         printf("ERROR:Source image is not .bmp file\n");
         return e_failure;
@@ -71,11 +60,7 @@ Status read_and_validate_decode_args(int argc,char *argv[], DecodeInfo *decInfo)
 
 Status do_decoding(DecodeInfo *decInfo)
 {
-    if(open_decode_files(decInfo)==e_failure)
-    {
-        return e_failure;
-    }
-
+    
     if(decode_magic_string(MAGIC_STRING,decInfo)==e_failure)
     {
         return e_failure;
@@ -131,7 +116,7 @@ Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo)
         fread(buffer,8,1,decInfo->fptr_src_image);
 
         decode_byte_from_lsb(buffer,&data);
-        if(data !=magic_string[i])
+        if(data!=magic_string[i])
         {
             return e_failure;
         }
@@ -198,6 +183,21 @@ Status decode_secret_file_size(DecodeInfo *decInfo)
 
 Status decode_secret_file_data(DecodeInfo *decInfo)
 {
+    char filename[50];
+    strcpy(filename,decInfo->secret_fname);
+    char *dot=strrchr(filename,'.');
+    if(dot!=NULL)
+    {
+        *dot='\0';
+    }
+    strcat(filename,decInfo->extn_secret_file);
+    decInfo->fptr_secret=fopen(filename,"w");
+    if(decInfo->fptr_secret==NULL)
+    {
+        perror("fopen");
+        return e_failure;
+    }
+    
     char buffer[8];
     char data;
 
@@ -211,5 +211,6 @@ Status decode_secret_file_data(DecodeInfo *decInfo)
         }
         fwrite(&data,1,1,decInfo->fptr_secret);
     }
+    fclose(decInfo->fptr_secret);
     return e_success;
 }

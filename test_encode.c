@@ -13,6 +13,14 @@ int main(int argc,char *argv[])
             =>call do_encoding(&encodeInfo)==e_success
                 print "Encoding is success"
     */
+    if(argc<2)
+    {
+        printf("Invalid Input\n");
+        printf("For encoding: ./a.out -e beautiful.bmp secret.txt [stego.bmp]\n");
+        printf("For dencoding: ./a.out -d stego.bmp [decode.txt]\n");
+        return 1;
+    }
+    
     if(check_operation_type(argv[1][1])==e_encode)
     {
         if(read_and_validate_encode_args(argc,argv,&encInfo)==e_success)
@@ -25,6 +33,10 @@ int main(int argc,char *argv[])
             {
                 printf("Encoding is failed\n");
             }
+        }
+        else
+        {
+            printf("Encoding arguments are Invalid\n");
         }
     }
     else if(check_operation_type(argv[1][1])==e_decode)
@@ -40,11 +52,19 @@ int main(int argc,char *argv[])
                 printf("Decoding is failed\n");
             }
         }
+        else
+        {
+            printf("Decoding arguments are Invalid\n");
+        }
     }
     else
     {
-        printf("Unsupported operation\n");
+        printf("Invalid Operation\n");
+        printf("For encoding: ./a.out -e beautiful.bmp secret.txt [stego.bmp]\n");
+        printf("For dencoding: ./a.out -d stego.bmp [decode.txt]\n");
+        return 1;
     }
+    
     return 0;
 }
 

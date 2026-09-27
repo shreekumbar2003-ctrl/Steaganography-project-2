@@ -106,7 +106,7 @@ Status read_and_validate_encode_args(int argc,char *argv[],EncodeInfo *encInfo)
         return e_failure;
     }
 
-    if(strcmp(argv[2]+strlen(argv[2])-4,".bmp")!=0)
+    if(strlen(argv[2])<4 || strcmp(argv[2]+strlen(argv[2])-4, ".bmp")!=0)
     {
         printf("Error:Source image is not .bmp file\n");
         return e_failure;
@@ -120,7 +120,7 @@ Status read_and_validate_encode_args(int argc,char *argv[],EncodeInfo *encInfo)
     }
     else
     {
-        if(strcmp(argv[4]+strlen(argv[4])-4,".bmp")!=0)
+        if(strlen(argv[4])<4 || strcmp(argv[4]+strlen(argv[4])-4, ".bmp")!=0)
         {
             printf("ERROR:Output image is not .bmp file\n");
             return e_failure;
@@ -381,6 +381,12 @@ Status encode_secret_file_extn_size(EncodeInfo *encInfo)
 
     dot=strchr(encInfo->secret_fname,'.');
 
+    if(dot == NULL)
+    {
+        printf("ERROR: Secret file has no extension\n");
+        return e_failure;
+    }
+
     strcpy(encInfo->extn_secret_file,dot);
 
     fread(buffer,32,1,encInfo->fptr_src_image);
@@ -477,7 +483,7 @@ Status encode_secret_file_data(EncodeInfo *encInfo)
         ->encode_byte_to_lsb(data,buff)
     */
     char buffer[8];
-    char data;
+    int data;
 
     while((data=fgetc(encInfo->fptr_secret))!=EOF)
     {

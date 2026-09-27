@@ -19,7 +19,7 @@ typedef struct _DecodeInfo
     FILE *fptr_secret;
 
     /* secret file information */
-    char extn_secret_file[MAX_FILE_SUFFIX];
+    char extn_secret_file[MAX_FILE_SUFFIX+1];
     int extn_size;
     int size_secret_file;
 }DecodeInfo;

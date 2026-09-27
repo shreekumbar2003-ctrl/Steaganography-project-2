@@ -26,7 +26,7 @@ typedef struct _EncodeInfo
     /* Secret File Info */
     char *secret_fname;
     FILE *fptr_secret;
-    char extn_secret_file[MAX_FILE_SUFFIX];
+    char extn_secret_file[MAX_FILE_SUFFIX +1];
     char secret_data[MAX_SECRET_BUF_SIZE];
     long size_secret_file;
 
@@ -86,7 +86,5 @@ Status encode_byte_to_lsb(char data, char *image_buffer);
 
 /* Copy remaining image bytes from src to stego image after encoding */
 Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest);
-
-Status encode_size_to_lsb(int size,char *Image_buff);
 
 #endif
